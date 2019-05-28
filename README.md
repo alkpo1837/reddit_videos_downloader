@@ -20,4 +20,4 @@ Use `python reddit_videos_downloader.py` to run the script and download the vide
 
 Provide the thread link with the `-i` argument. For exemple :
 
-`python reddit_videos_downloader.py -i https://www.reddit.com/r/AskReddit/comments/bjliax/what_is_your_favorite_video_on_the_internet_that/`
+`python reddit_videos_downloader.py -i https://www.reddit.com/r/AskReddit/comments/bjliax/what_is_your_favorite_video_on_the_internet_that`
