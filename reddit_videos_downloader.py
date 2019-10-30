@@ -1,4 +1,5 @@
 import praw
+import prawcore
 import json
 import os
 import sys
@@ -36,7 +37,14 @@ def download_youtube_video(url):
             print(f'ERROR : Cannot download {url} : {download_error}')
             
 def download_all_videos(thread_url):
-    config = json.load(open('config.json', 'r'))
+
+    try:
+        with open('config.json', 'r') as config_file:
+            config = json.load(config_file)
+    except FileNotFoundError:
+        print('ERROR : config.json is not found.')
+        sys.exit(0)
+    
     reddit = praw.Reddit(client_id=config['clientId'],
                         client_secret=config['clientSecret'],
                         user_agent=config['userAgent'])
@@ -46,14 +54,18 @@ def download_all_videos(thread_url):
         print('ERROR : The input url is not correct. Please provide a valid Reddot thread.')
         sys.exit(0)
 
+    try: 
+        comments_list = submission.comments.list()
+    except prawcore.exceptions.ResponseException:
+        print('ERROR : client_id, client_secret or user_agent not valid')
+        sys.exit(0)
+        
     p = Path(f'./download')
     if not p.exists():
         os.makedirs(f'./download')
 
-
-
     # https://praw.readthedocs.io/en/latest/tutorials/comments.html
-    for comment in submission.comments.list():
+    for comment in comments_list:
         if isinstance(comment, MoreComments):
             continue
 
@@ -68,8 +80,6 @@ def download_all_videos(thread_url):
         if urls_https is not None:
             all_urls = all_urls + urls_https
 
-        print(all_urls)
-
         for url in all_urls:
             parsed_url = urlparse(url)
             if parsed_url.netloc == 'www.youtube.com':
@@ -81,8 +91,7 @@ def download_all_videos(thread_url):
                 download_youtube_video(parsed_url.geturl())
 
             elif parsed_url.netloc == 'youtube.be':
-                download_youtube_video(parsed_url.geturl())
-                
+                download_youtube_video(parsed_url.geturl())                
 def main():
     thread_url = get_args()
 
