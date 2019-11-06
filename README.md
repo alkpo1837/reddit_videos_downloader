@@ -1,6 +1,6 @@
 # Reddit content downloader
 
-A python program to download videos from all comments of a specific Thread.
+A python program to download Youtube videos from all comments of a specific thread.
 
 ## Prerequisites
 
